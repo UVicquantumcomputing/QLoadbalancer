@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project does something to show something using something 
+This project simulates a classic load balancer simulation, where one load balancer routes traffic to multiple servers as efficiently as possible. However, we implement a quantum algorithm that runs on a real IBM quantum computer, that we use to calculate the traffic distribution logic. Then, using this output, we route the traffic to the corresponding servers.
 
 ## Project Structure
 
@@ -29,7 +29,9 @@ The load balancer
 
 - Demonstrate quantum assisted routing
 - Benchmark under concurrent load
-- something else
+- Compare implementation idea with results, and other possible implementation ideas
+- Compare classical to quantum algorithms performance in this scenario / problem space
+- Future of load balancing/optimization with quantum algorithms
 
 ## Requirements 
 - Python 

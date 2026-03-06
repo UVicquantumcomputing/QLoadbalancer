@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO: setup so reads from server_config.py?
 echo "Starting QLoadbalancer servers..."
 
 python servers/server.py 5001 100 &

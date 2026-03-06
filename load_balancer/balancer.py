@@ -42,4 +42,5 @@ Quantum operations update routing policy based on reward (e.g., low latency).
 Pros: Adaptive, can handle dynamic traffic.
 Cons: Still mostly experimental.
 
+Joe's vote -> QAOA
 '''
