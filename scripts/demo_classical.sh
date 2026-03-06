@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Demo script showing classical load balancer + traffic generator integration
+# This script demonstrates how to test the classical load balancer
+
+echo "=== Quantum Load Balancer Demo ==="
+echo "Testing Classical Load Balancer with Traffic Generator"
+echo ""
+
+# Check if Python is available
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is required but not installed"
+    exit 1
+fi
+
+echo "Step 1: Starting backend servers..."
+./scripts/start_servers.sh &
+SERVER_PID=$!
+
+# Wait for servers to start
+echo "Waiting for servers to start..."
+sleep 3
+
+# Check if servers are running
+echo "Checking server health..."
+for port in 5001 5002 5003; do
+    if curl -s "http://localhost:$port/status" > /dev/null; then
+        echo "  ✓ Server on port $port is running"
+    else
+        echo "  ✗ Server on port $port failed to start"
+    fi
+done
+
+echo ""
+echo "Step 2: Starting classical load balancer..."
+cd ../load_balancer
+python3 c_balancer.py --server localhost 8080 &
+LB_PID=$!
+cd ../scripts
+
+# Wait for load balancer to start
+echo "Waiting for load balancer to start..."
+sleep 2
+
+# Test load balancer health
+if curl -s "http://localhost:8080/health" > /dev/null; then
+    echo "  ✓ Classical load balancer is running on http://localhost:8080"
+else
+    echo "  ✗ Load balancer failed to start"
+    kill $SERVER_PID $LB_PID 2>/dev/null
+    exit 1
+fi
+
+echo ""
+echo "Step 3: Running traffic generation tests..."
+cd ../traffic
+python3 traffic_generator.py
+cd ../scripts
+
+echo ""
+echo "Step 4: Getting final statistics..."
+curl -s "http://localhost:8080/stats" | python3 -m json.tool
+
+echo ""
+echo "Demo completed! Cleaning up..."
+
+# Kill background processes
+kill $LB_PID 2>/dev/null
+pkill -f "server.py" 2>/dev/null
+
+echo "All processes stopped."

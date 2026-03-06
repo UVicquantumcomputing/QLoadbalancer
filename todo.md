@@ -33,3 +33,17 @@
 - **Environment**: Local development, IBM Quantum via Qiskit
 - **Focus**: Quantum approach with classical comparison
 - **Traffic**: Start with simple synthetic loads
+
+## Project Structure
+- `/demo/` - Demo and example files
+- `/scripts/` - Utility scripts (startup, testing, etc.)
+- `/load_balancer/` - Classical and quantum load balancer implementations
+- `/server/` - Backend server code and configuration
+- `/traffic/` - Traffic generation and analysis tools
+- `/qaoa/` - Quantum algorithm implementations
+
+
+other
+demo scripts
+benchmarking tools
+visualizations/charts/plots

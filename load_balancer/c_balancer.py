@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 import sys
 import os
+from flask import Flask, request, jsonify
 
 # Add parent directory to path for importing server config
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -222,6 +223,101 @@ class ClassicalLoadBalancer:
         return results
 
 
+# Flask application for HTTP interface
+app = Flask(__name__)
+load_balancer = None
+
+
+@app.route('/route', methods=['POST'])
+def route_request():
+    """HTTP endpoint for routing requests (used by traffic generator)"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"status": "error", "message": "No JSON data provided"}), 400
+    
+    request_weight = data.get('weight', 1)
+    request_id = data.get('request_id', 'unknown')
+    
+    if not load_balancer:
+        return jsonify({"status": "error", "message": "Load balancer not initialized"}), 500
+    
+    # Route the request
+    result = load_balancer.route_request(request_weight)
+    
+    if result:
+        # Add request metadata to response
+        result['request_id'] = request_id
+        result['timestamp'] = time.time()
+        return jsonify(result)
+    else:
+        return jsonify({
+            "status": "error", 
+            "message": "Failed to route request",
+            "request_id": request_id
+        }), 503
+
+
+@app.route('/stats', methods=['GET'])
+def get_stats():
+    """Get load balancer statistics"""
+    if not load_balancer:
+        return jsonify({"status": "error", "message": "Load balancer not initialized"}), 500
+    
+    stats = load_balancer.get_load_balancer_stats()
+    stats['timestamp'] = time.time()
+    return jsonify(stats)
+
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check all servers"""
+    if not load_balancer:
+        return jsonify({"status": "error", "message": "Load balancer not initialized"}), 500
+    
+    health_status = load_balancer.health_check_all()
+    return jsonify({
+        "status": "ok",
+        "servers": health_status,
+        "timestamp": time.time()
+    })
+
+
+@app.route('/reset', methods=['POST'])
+def reset_servers():
+    """Reset all servers"""
+    if not load_balancer:
+        return jsonify({"status": "error", "message": "Load balancer not initialized"}), 500
+    
+    reset_results = load_balancer.reset_all_servers()
+    return jsonify({
+        "status": "ok",
+        "reset_results": reset_results,
+        "timestamp": time.time()
+    })
+
+
+def run_load_balancer_server(host: str = "0.0.0.0", port: int = 8080):
+    """Run the classical load balancer as HTTP server"""
+    global load_balancer
+    
+    print("=== Starting Classical Load Balancer Server ===")
+    load_balancer = ClassicalLoadBalancer()
+    
+    print(f"\nLoad balancer API endpoints:")
+    print(f"  POST http://{host}:{port}/route   - Route requests")
+    print(f"  GET  http://{host}:{port}/stats   - Get statistics") 
+    print(f"  GET  http://{host}:{port}/health  - Health check")
+    print(f"  POST http://{host}:{port}/reset   - Reset servers")
+    
+    print(f"\nStarting server on http://{host}:{port}")
+    print("Press Ctrl+C to stop")
+    
+    try:
+        app.run(host=host, port=port, debug=False)
+    except KeyboardInterrupt:
+        print("\nShutting down load balancer server...")
+
+
 def main():
     """Demo of classical load balancer"""
     print("=== Classical Load Balancer Demo ===")
@@ -249,4 +345,14 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) > 1 and sys.argv[1] == "--server":
+        # Run as HTTP server for integration with traffic generator
+        host = "localhost" if len(sys.argv) < 3 else sys.argv[2]  
+        port = 8080 if len(sys.argv) < 4 else int(sys.argv[3])
+        run_load_balancer_server(host, port)
+    else:
+        # Run standalone demo
+        main()
     main()
