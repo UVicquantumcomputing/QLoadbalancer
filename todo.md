@@ -9,7 +9,7 @@
 - [ ] **Create requirements.txt and setup** - Qiskit, Flask, numpy, matplotlib for visualization
 
 ## Phase 2: Classical Baseline 
-- [ ] **Implement classical load balancer baseline** - Round robin, weighted round robin for comparison
+- [X] **Implement classical load balancer baseline** - Weighted Least Connections
 
 ## Phase 3: Core Quantum Implementation
 - [ ] **Build QAOA problem encoding (3 servers)** - Map server loads to Hamiltonian, define cost function
@@ -18,7 +18,7 @@
 
 ## Phase 4: Testing & Analysis
 - [ ] **Add basic metrics collection** - Response times, server utilization, routing decisions
-- [ ] **Create synthetic traffic generator** - Simple request patterns for testing
+- [ ] **Create synthetic traffic generator** - Simple request patterns for testing, other request patterns for testing if successful
 - [ ] **Document different traffic patterns** - Burst loads, gradual increases, mixed patterns
 - [ ] **Build results analysis and comparison** - Classical vs quantum performance visualization
 
