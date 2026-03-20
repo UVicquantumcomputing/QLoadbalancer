@@ -14,7 +14,7 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 echo "Step 1: Starting backend servers..."
-./scripts/start_servers.sh &
+bash start_servers.sh &
 SERVER_PID=$!
 
 # Wait for servers to start
@@ -36,7 +36,7 @@ echo "Step 2: Starting classical load balancer..."
 cd ../load_balancer
 python3 c_balancer.py --server localhost 8080 &
 LB_PID=$!
-cd ../scripts
+cd -
 
 # Wait for load balancer to start
 echo "Waiting for load balancer to start..."
@@ -55,7 +55,7 @@ echo ""
 echo "Step 3: Running traffic generation tests..."
 cd ../traffic
 python3 traffic_generator.py
-cd ../scripts
+cd -
 
 echo ""
 echo "Step 4: Getting final statistics..."
