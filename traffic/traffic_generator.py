@@ -108,11 +108,11 @@ class MixedTraffic(TrafficPattern):
         # 70% lightweight, 20% medium, 10% heavy requests
         rand = random.random()
         if rand < 0.7:
-            return 1  # Light
+            return 5  # Light
         elif rand < 0.9:
-            return 3  # Medium  
+            return 8  # Medium  
         else:
-            return 5  # Heavy
+            return 14  # Heavy
 
 
 class TrafficGenerator:
@@ -318,9 +318,9 @@ def demo_traffic_patterns():
     generator = TrafficGenerator()
     
     patterns = [
-        ("Constant Traffic", ConstantTraffic(duration=10, base_rate=5)),
-        ("Burst Traffic", BurstTraffic(duration=15, base_rate=3, burst_rate=15, burst_duration=3)),
-        ("Ramp Traffic", RampTraffic(duration=12, start_rate=2, end_rate=10)),
+        ("Constant Traffic", ConstantTraffic(duration=10, base_rate=10)),
+        ("Burst Traffic", BurstTraffic(duration=15, base_rate=30, burst_rate=15, burst_duration=3)),
+        ("Ramp Traffic", RampTraffic(duration=12, start_rate=20, end_rate=100)),
         ("Random Traffic", RandomTraffic(duration=8, base_rate=6)),
         ("Mixed Traffic", MixedTraffic(duration=10, base_rate=5)),
     ]
@@ -330,7 +330,7 @@ def demo_traffic_patterns():
         print(f"Testing: {pattern_name}")
         print(f"{'='*50}")
         
-        results = generator.run_traffic_pattern(pattern, concurrent_workers=3)
+        results = generator.run_traffic_pattern(pattern, concurrent_workers=10)
         summary = generator.get_traffic_summary()
         
         print(f"\n--- Results for {pattern_name} ---")

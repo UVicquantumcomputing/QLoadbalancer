@@ -40,7 +40,7 @@ cd -
 
 # Wait for load balancer to start
 echo "Waiting for load balancer to start..."
-sleep 5
+sleep 7
 
 # Test load balancer health
 if curl -s "http://localhost:8080/health" > /dev/null; then

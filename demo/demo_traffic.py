@@ -27,20 +27,27 @@ def quick_demo():
     
     generator = TrafficGenerator("http://localhost:8080")
     
-    # Test different patterns
+    # Test different patterns (include heavier / stress scenarios)
+    # Each tuple: (name, pattern_instance, concurrent_workers)
     patterns = [
-        ("Constant Load", ConstantTraffic(duration=8, base_rate=4)),
-        ("Burst Load", BurstTraffic(duration=10, base_rate=2, burst_rate=12, burst_duration=2)),
-        ("Ramp Load", RampTraffic(duration=8, start_rate=1, end_rate=8)),
+        ("Constant Load", ConstantTraffic(duration=8, base_rate=4), 3),
+        ("Burst Load", BurstTraffic(duration=10, base_rate=2, burst_rate=12, burst_duration=2), 3),
+        ("Ramp Load", RampTraffic(duration=8, start_rate=1, end_rate=8), 3),
+
+        # Heavier load scenarios
+        ("Heavy Constant Load", ConstantTraffic(duration=12, base_rate=20), 8),
+        ("Stress Burst", BurstTraffic(duration=15, base_rate=5, burst_rate=80, burst_duration=4), 10),
+        ("Sustained High Ramp", RampTraffic(duration=20, start_rate=10, end_rate=50), 12),
+        ("Mixed Heavy Traffic", MixedTraffic(duration=15, base_rate=25), 10),
     ]
-    
-    for pattern_name, pattern in patterns:
+
+    for pattern_name, pattern, workers in patterns:
         print(f"\n{'='*50}")
         print(f"Testing: {pattern_name}")
         print(f"{'='*50}")
         
         # Run the traffic pattern
-        results = generator.run_traffic_pattern(pattern, concurrent_workers=3)
+        results = generator.run_traffic_pattern(pattern, concurrent_workers=workers)
         
         # Show summary
         summary = generator.get_traffic_summary()
