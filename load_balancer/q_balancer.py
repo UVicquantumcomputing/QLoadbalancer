@@ -110,6 +110,7 @@ class QuantumLoadBalancer:
             # load_ratio = 1.0 (full)   -> angle = 0   -> |0> (least likely to be selected)
             for i, server in enumerate(healthy_servers):
                 load_ratio = self.calculate_load_ratio(server)
+                print(load_ratio)
                 clamped = min(load_ratio, 1.0)
                 angle = math.pi * (1.0 - clamped)
                 qc.ry(angle, i)
@@ -119,6 +120,7 @@ class QuantumLoadBalancer:
             simulator = AerSimulator()
             job = simulator.run(qc, shots=1000)
             counts = job.result().get_counts()
+            #print(counts)
 
             # Count how often each qubit measured |1| across all shots
             qubit_ones = [0] * n

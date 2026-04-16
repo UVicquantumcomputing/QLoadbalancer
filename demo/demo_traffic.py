@@ -21,8 +21,8 @@ from traffic.traffic_generator import (
 
 
 def quick_demo():
-    """Quick demo showing classical load balancer with traffic patterns"""
-    print("=== Classical Load Balancer + Traffic Generator Demo ===")
+    """Quick demo showing load balancer with traffic patterns"""
+    print("=== Load Balancer + Traffic Generator Demo ===")
     print()
     
     generator = TrafficGenerator("http://localhost:8080")
